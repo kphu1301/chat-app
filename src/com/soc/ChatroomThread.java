@@ -9,11 +9,14 @@ import java.net.Socket;
 
 public class ChatroomThread implements Runnable {
 	private Socket s;
+	private String userIp;
+	private String username;
 	private Chatroom chatroom;
 	
 	public ChatroomThread(Socket s, Chatroom chatroom) {
 		this.s = s;
 		this.chatroom = chatroom;
+		this.userIp = s.getInetAddress().getHostAddress();
 	}
 	
 	@Override
@@ -31,6 +34,7 @@ public class ChatroomThread implements Runnable {
 			
 			// try to add client to chatroom
 			chatroom.addUser(s, out, br);
+			this.username = chatroom.getUsers().get(s);
 			
 			while(true) {
 				//receive msg
@@ -39,6 +43,18 @@ public class ChatroomThread implements Runnable {
 					//socket closed unexpectedly on client side
 					break;
 				}
+				
+				switch (msg) {
+				case "/users":
+					chatroom.getUsernames().forEach(username -> {
+						out.println(username);
+					});
+					out.println(chatroom.getUsernames().size());
+					break;
+				default:
+					break;
+				}
+				
 				if (msg != null) {
 					if (msg.equals("/quit")) {
 						break;
@@ -50,11 +66,11 @@ public class ChatroomThread implements Runnable {
 			}
 		}
 		catch(IOException e) {
-			System.out.println("Connection to + " + s.getInetAddress().getHostAddress() + " closed unexpectedly");
+			System.out.println("Connection to + " + userIp + " closed unexpectedly");
 		}
 		
 		finally {
-			chatroom.removeUser(s);
+			chatroom.removeUser(s, userIp, username);
 		}
 	}
 }

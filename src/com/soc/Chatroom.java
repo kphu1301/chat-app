@@ -107,12 +107,11 @@ public class Chatroom {
 		return port;
 	}
 	
-	public void removeUser(Socket s) {
-		String username = users.get(s);
+	public void removeUser(Socket s, String userIp, String username) {
 		usernames.remove(username);
 		users.remove(s);
 		sendSystemMsg(username + " has left the chat");
-		System.out.println("Client: " + s.getInetAddress().getHostAddress() + " has disconnected");
+		System.out.println("Client: " + userIp + " has disconnected");
 	}
 
 	public void addUser(Socket s, PrintWriter out, BufferedReader br)  {
