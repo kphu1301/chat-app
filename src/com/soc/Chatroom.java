@@ -1,9 +1,9 @@
 package com.soc;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -57,8 +57,7 @@ public class Chatroom {
 				*/
 				Socket s = chatroom.ss.accept();
 				
-				// try to add client to chatroom
-				chatroom.addUser(s);
+
 				/* 
 				** program flow continues with successful connection
 				** create new thread for communication
@@ -116,16 +115,9 @@ public class Chatroom {
 		sendSystemMsg(username + " has left the chat");
 	}
 
-	public void addUser(Socket s)  {
-		System.out.println("Client from " + s.getInetAddress().getHostAddress() + " has connected!");
+	public void addUser(Socket s, PrintWriter out, BufferedReader br)  {
 		try {
-			// get input/outstream to client
-			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			PrintWriter out = new PrintWriter(s.getOutputStream());
-		
-			//greet client
-			out.println("Welcome to the 626g Chatroom!");
-			out.flush();
+			// 
 			
 			//match usernames 3-12 letters, numbs and letters
 			String pattern = "^[a-zA-Z0-9]{3,12}$";
@@ -136,8 +128,9 @@ public class Chatroom {
 				//prompt for username
 				out.println("Enter Username (min length: 3, max length: 12, " 
 						+ "letters and/or numbers)");
-				out.flush();
+				
 				String line = br.readLine();
+				System.out.println(line);
 				
 				//check if username meets criteria
 				Matcher m = p.matcher(line);
@@ -169,10 +162,9 @@ public class Chatroom {
 			//sendMsg msg to user
 			PrintWriter out = null;
 			try {
-				out = new PrintWriter(new DataOutputStream(socket.getOutputStream()));
+				out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 				String username = users.get(from);
 				out.println(username + ": " + msg);
-				out.flush();
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -184,9 +176,8 @@ public class Chatroom {
 	public void sendSystemMsg(String msg) {
 		users.forEach((socket, user) -> {
 			try {
-				PrintWriter out = new PrintWriter(new DataOutputStream(socket.getOutputStream()));
+				PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 				out.println(msg);
-				out.flush();
 			}
 			catch (IOException e) {
 				e.printStackTrace();

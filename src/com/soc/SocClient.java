@@ -1,6 +1,7 @@
 package com.soc;
 
 import java.io.BufferedReader;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -17,8 +18,8 @@ public class SocClient implements Runnable {
     
     public SocClient(String serverIp, int serverPort) throws UnknownHostException, IOException  {
         s = new Socket(serverIp, serverPort);
+        out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
         br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        out = new PrintWriter(s.getOutputStream());
     }
     
     public static void main(String[] args) throws Exception {
@@ -26,23 +27,16 @@ public class SocClient implements Runnable {
         SocClient client = new SocClient("localhost", 9999);
         
         executorService.execute(client);
-        
-        //display server prompt
-        System.out.println(client.br.readLine());
-        System.out.println(client.br.readLine());
 
         Scanner sc = new Scanner(System.in);
-        String user = sc.nextLine();
-        client.out.println(user);
-        client.out.flush();
-        
         String line = "";
-        
+       
         while (!line.equals("/quit")) {
             line = sc.nextLine();
+            System.out.println(line);
+ 
             if (!line.equals("")) {
                 client.out.println(line);
-                client.out.flush();
             }
         }
         client.s.close();
@@ -52,10 +46,14 @@ public class SocClient implements Runnable {
     @Override
     public void run() {
         try {
+        	//display server prompt
+            String fromServer = "";
+            System.out.println("Buffer: ```" + (fromServer = br.readLine())  + "```");
+            System.out.println("Buffer: ```" + (fromServer = br.readLine())  + "```");
             while (true) {
-                String line = br.readLine();
-                if (line != null) {
-                    System.out.println(line);
+                fromServer = br.readLine();
+                if (fromServer != null) {
+                    System.out.println(fromServer);
                 }
             }
         } catch (IOException e) {

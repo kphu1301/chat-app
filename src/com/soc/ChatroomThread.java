@@ -1,6 +1,7 @@
 package com.soc;
 
 import java.io.BufferedReader;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -17,19 +18,25 @@ public class ChatroomThread implements Runnable {
 	
 	@Override
 	public void run() {
+	
 		//new thread/connection made. listen for msgs
+		System.out.println("Client from " + s.getInetAddress().getHostAddress() + " has connected!");
+		
 		try {
+			//get input/output streams
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			//greet client
+			out.println("Welcome to the 626g Chatroom!");
+			
+			// try to add client to chatroom
+			chatroom.addUser(s, out, br);
+			
 			while(true) {
-				//get input/output streams
-				PrintWriter out = new PrintWriter(s.getOutputStream());
-				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				
 				//receive msg
 				String msg = br.readLine();
 				if (msg != null) {
-					if (!msg.startsWith("/")){
-						chatroom.sendMsg(s, msg);
-					}
+					chatroom.sendMsg(s, msg);
 					
 				}
 			}
