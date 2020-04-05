@@ -2,7 +2,6 @@ package com.soc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -113,6 +112,7 @@ public class Chatroom {
 		usernames.remove(username);
 		users.remove(s);
 		sendSystemMsg(username + " has left the chat");
+		System.out.println("Client: " + s.getInetAddress().getHostAddress() + " has disconnected");
 	}
 
 	public void addUser(Socket s, PrintWriter out, BufferedReader br)  {
@@ -130,7 +130,6 @@ public class Chatroom {
 						+ "letters and/or numbers)");
 				
 				String line = br.readLine();
-				System.out.println(line);
 				
 				//check if username meets criteria
 				Matcher m = p.matcher(line);

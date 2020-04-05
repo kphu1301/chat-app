@@ -35,15 +35,22 @@ public class ChatroomThread implements Runnable {
 			while(true) {
 				//receive msg
 				String msg = br.readLine();
+				if (msg == null) {
+					//socket closed unexpectedly on client side
+					break;
+				}
 				if (msg != null) {
-					chatroom.sendMsg(s, msg);
-					
+					if (msg.equals("/quit")) {
+						break;
+					}
+					if(!msg.startsWith("/")) {
+						chatroom.sendMsg(s, msg);
+					}
 				}
 			}
 		}
 		catch(IOException e) {
 			System.out.println("Connection to + " + s.getInetAddress().getHostAddress() + " closed unexpectedly");
-			
 		}
 		
 		finally {

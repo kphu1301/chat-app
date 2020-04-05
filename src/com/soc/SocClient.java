@@ -38,9 +38,7 @@ public class SocClient implements Runnable {
             if (!line.equals("")) {
                 client.out.println(line);
             }
-        }
-        client.s.close();
-            
+        }   
     }
 
     @Override
@@ -48,16 +46,11 @@ public class SocClient implements Runnable {
         try {
         	//display server prompt
             String fromServer = "";
-            System.out.println("Buffer: ```" + (fromServer = br.readLine())  + "```");
-            System.out.println("Buffer: ```" + (fromServer = br.readLine())  + "```");
-            while (true) {
-                fromServer = br.readLine();
-                if (fromServer != null) {
-                    System.out.println(fromServer);
-                }
+            while ((fromServer = br.readLine()) != null) {
+            	System.out.println(fromServer);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection to server closed unexpectedly");
         }
     }
 
