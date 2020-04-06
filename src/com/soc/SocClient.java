@@ -37,8 +37,9 @@ public class SocClient implements Runnable {
             if (!line.equals("")) {
                 client.out.println(line);
             }
-        } 
+        }
         sc.close();
+        client.s.close();
     }
 
     @Override
