@@ -33,7 +33,6 @@ public class SocClient implements Runnable {
        
         while (!line.equals("/quit")) {
             line = sc.nextLine();
-            System.out.println(line);
  
             if (!line.equals("")) {
                 client.out.println(line);
