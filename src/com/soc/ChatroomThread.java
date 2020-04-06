@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.regex.Pattern;
 
 public class ChatroomThread implements Runnable {
 	private Socket s;
@@ -44,25 +45,17 @@ public class ChatroomThread implements Runnable {
 					break;
 				}
 				
-				switch (msg) {
-				case "/users":
+				//  process msg 
+				if (msg.equals("/users")) {
 					chatroom.getUsernames().forEach(username -> {
 						out.println(username);
 					});
 					out.println(chatroom.getUsernames().size());
-					break;
-				default:
-					break;
+				}
+				else if (!msg.startsWith("/")) {
+					chatroom.sendMsg(s, msg);
 				}
 				
-				if (msg != null) {
-					if (msg.equals("/quit")) {
-						break;
-					}
-					if(!msg.startsWith("/")) {
-						chatroom.sendMsg(s, msg);
-					}
-				}
 			}
 		}
 		catch(IOException e) {
